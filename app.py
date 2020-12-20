@@ -12,9 +12,6 @@ GetCorrianderMandiData = future_prediction.GetMandiForCorriander()
 GetCottonMandiData = future_prediction.GetMandiForCotton()
 FinalDataSentToUser=[]
 
-def Convert(lst):
-    res_dct = {lst[i]: lst[i + 1] for i in range(0, len(lst))}
-    return res_dct
 
 @app.route('/getuserselectedmandi')
 def getuserselectedmandi():
@@ -40,17 +37,10 @@ def getuserselectedmandi():
                 data = json.load(f)
                 FinalDataSentToUser.append(data)
 
-        # dictdata = Convert(FinalDataSentToUser)
-        # json_str = json.dumps(df.to_json())
-        # response = json.loads(json_str.replace("\'",'"'))
         return jsonify({
                 "data" : FinalDataSentToUser
     })
-        # return jsonify({
-        #     "MandiName" : '{}'.format(MandiName),
-        #     "Message": "Got Mandi Successfully"})
 
 
-port = int(os.environ.get('PORT', 5000))
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run()
