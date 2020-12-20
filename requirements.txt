@@ -16,7 +16,6 @@ idna==2.10
 itsdangerous==1.1.0
 jdcal==1.4.1
 Jinja2==2.11.2
-joblib @ file:///tmp/build/80754af9/joblib_1607970656719/work
 kiwisolver==1.3.1
 Markdown==3.3.3
 MarkupSafe==1.1.1
@@ -40,10 +39,7 @@ pytz==2020.4
 requests==2.25.1
 requests-oauthlib==1.3.0
 rsa==4.6
-scikit-learn @ file:///C:/ci/scikit-learn_1598377018496/work
-scipy @ file:///C:/ci/scipy_1604596260408/work
 seaborn==0.11.0
-six @ file:///C:/ci/six_1605187374963/work
 sklearn==0.0
 statsmodels==0.12.1
 tensorboard==2.2.2
@@ -53,9 +49,7 @@ tensorflow-estimator==2.2.0
 tensorflow-gpu==2.3.1
 tensorflow-gpu-estimator==2.3.0
 termcolor==1.1.0
-threadpoolctl @ file:///tmp/tmp9twdgx9k/threadpoolctl-2.1.0-py3-none-any.whl
 urllib3==1.26.2
 Werkzeug==1.0.1
-wincertstore==0.2
 xgboost==1.3.0.post0
 xlrd==1.2.0
