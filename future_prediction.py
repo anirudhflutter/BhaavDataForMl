@@ -8,6 +8,7 @@ import glob
 from csv import reader
 import csv
 import re
+import pymongo
 import json
 from matplotlib import pyplot
 import seaborn as sns
@@ -85,7 +86,7 @@ def trainingmodel(df,MandiFileName,cropname):
     # print(Pickled_LR_Model)
 
     pred_uc = results.get_forecast(steps=20)
-
+    plt.style
     print("pred_uc")
     print(pred_uc)
     # Get confidence intervals of forecasts
@@ -183,26 +184,34 @@ def trainingmodel(df,MandiFileName,cropname):
 #     plot.show(plot)
 
 
-cropname1 = 'data/BAJRA/'
-cropname2 = 'data/CORRIANDER LEAVES'
-cropname3 = 'data/cotton'
 
+
+MandiListForAll = []
 MandiListForBajra = []
-MandiListCopyForBajra = []
 MandiListForCorriander = []
 MandiListForCotton = []
+MandiListForGinger = []
+MandiListForGreenchilli = []
+MandiListForJowar = []
+MandiListForMaize = []
+MandiListForOnion = []
+MandiListForSoybean = []
+MandiListForTomato = []
+MandiListForWheat = []
 
 
-def GetMandiCopyForBajra():
-    directory = os.path.join("Datatobeprocessed/bajra/")
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            MandiListCopyForBajra.append(file)
-            # if file.endswith(".csv"):
-            #     file.split(".")
-            #     MandiListForBajra.append(file.replace(".csv", ""))
-    print("Bajra")
-    return MandiListCopyForBajra
+
+# def GetMandiCopyForBajra():
+#     directory = os.path.join("Datatobeprocessed/bajra/")
+#     for root, dirs, files in os.walk(directory):
+#         for file in files:
+#             MandiListCopyForBajra.append(file)
+#             # if file.endswith(".csv"):
+#             #     file.split(".")
+#             #     MandiListForBajra.append(file.replace(".csv", ""))
+#     print("Bajra")
+#     return MandiListCopyForBajra
+
 
 def preprocessingdata(MandiFileName,cropname):
     # with open("Datatobeprocessed/bajra/CopyOf%s" %MandiFileName, mode='w') as employee_file:
@@ -240,31 +249,40 @@ def preprocessingdata(MandiFileName,cropname):
     return trainingmodel(df,MandiFileName,cropname)
 
 
-def GetMandiForBajra():
-    directory = os.path.join(cropname1)
+def GetMandiid(cropId):
+
+    client = pymongo.MongoClient("mongodb+srv://root:root@cluster0.s73xs.mongodb.net/test")
+
+    mydb = client["Bhav"]
+    mycol = mydb["mandis"]
+    x = mycol.find()
+    for i in x:
+        for j in range(0,len(i['productId'])):
+            if str(i['productId'][j]) == str(cropId):
+                  selectedMandiId = str(i['_id'])
+                  break
+    return selectedMandiId
+
+def GetMandiForAll(mandiname,path):
+    MandiListForAll.clear()
+    directory = os.path.join(path)
     for root, dirs, files in os.walk(directory):
         for file in files:
-            MandiListForBajra.append(file)
-            # if file.endswith(".csv"):
-            #     file.split(".")
-            #     MandiListForBajra.append(file.replace(".csv", ""))
-    print("Bajra")
-    print(MandiListForBajra)
-    return MandiListForBajra
+            MandiListForAll.append(file)
+    # GetMandiDataForAll(MandiListForAll,mandiname)
+    return MandiListForAll
 
 
-def GetMandiDataForBajra():
-    # for i in range(0, len(MandiListCopyForBajra)):
-        # preprocessingdata(MandiListCopyForBajra[i])
-    # for file_name in glob.iglob('data/BAJRA/*.csv', recursive=True):
-    for i in MandiListForBajra:
+def GetMandiDataForAll(MandiListForAll,mandiname):
+    print(MandiListForAll)
+    for i in MandiListForAll:
         # filecompared1 = '{}\{}'.format(cropname1, MandiName)
         # print(filecompared1)
         print(i)
         # if file_name == filecompared1:
-        with open('Datatobeprocessed/BAJRA/%s' %i, mode='w') as employee_file:
+        with open('Datatobeprocessed/{}/{}'.format(mandiname,i), mode='w') as employee_file:
                 employee_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                with open('data/BAJRA/%s' %i, 'r') as read_obj:
+                with open('data/{}/{}'.format(mandiname,i), 'r') as read_obj:
                     csv_reader = reader(read_obj)
                     header = next(csv_reader)
                     # Check file as empty
@@ -272,10 +290,9 @@ def GetMandiDataForBajra():
                         # Iterate over each row after the header in the csv
                         for row in csv_reader:
                             # row variable is a list that represents a row in csv
-                            print(row)
                             # employee_writer.writerow(['John Smith', 'Accounting', 'November'])
                             employee_writer.writerow(row)
-
+    MandiListForAll.clear()
 
 
 def GetMandiForCorriander():
@@ -286,8 +303,6 @@ def GetMandiForCorriander():
             # if file.endswith(".csv"):
             #     file.split(".")
             #     MandiListForBajra.append(file.replace(".csv", ""))
-    print("Corriander")
-    print(MandiListForCorriander)
     return MandiListForCorriander
 
 
@@ -324,8 +339,6 @@ def GetMandiForCotton():
             # if file.endswith(".csv"):
             #     file.split(".")
             #     MandiListForBajra.append(file.replace(".csv", ""))
-    print("Cotton")
-    print(MandiListForCotton)
     return MandiListForCotton
 
 
@@ -406,11 +419,14 @@ import json
 
 # Function to convert a CSV to JSON
 # Takes the file paths as arguments
-def make_json(csvFilePath, jsonFilePath,mandiname,cropname):
+def make_json(csvFilePath, jsonFilePath,mandiname,cropname,cropId):
+    selectedmandiId = GetMandiid(cropId)
     # create a dictionary
     listofdata=[]
     data = {
         "CropName":cropname,
+        "CropId" : cropId,
+        "MandiId" : selectedmandiId,
         "MandiName" : mandiname,
         "Data" : listofdata,
     }
@@ -425,7 +441,7 @@ def make_json(csvFilePath, jsonFilePath,mandiname,cropname):
         json.dump(data,jsonfile)
 
 
-def finaldatastoredlocallyBajra (MandiList,cropname):
+def finaldatastoredlocally(MandiList,cropname,CropId):
     for i in MandiList:
             finaldata = preprocessingdata(i,cropname)
             finaldata.to_csv(r'finaldatasenttouser/{}/{}'.format(cropname,i))
@@ -439,19 +455,48 @@ def finaldatastoredlocallyBajra (MandiList,cropname):
             new_csv_path = 'finaldatasenttouser/{}/{}'.format(cropname,i)
             with open(new_csv_path, 'w') as f:
                        f.write(new_csv_str)
-            make_json('finaldatasenttouser/{}/{}'.format(cropname,i),'finaljsonfiles/{}/{}'.format(cropname,i),i,cropname)
+            make_json('finaldatasenttouser/{}/{}'.format(cropname,i),'finaljsonfiles/{}/{}'.format(cropname,i),i,cropname,CropId)
 
 
+cropname1 = 'data/BAJRA/'
+cropname2 = 'data/CORRIANDER LEAVES'
+cropname3 = 'data/cotton'
+cropname4 = 'data/Ginger/'
+cropname5 = 'data/Green Chilli'
+cropname6 = 'data/Jowar'
+cropname7 = 'data/Maize/'
+cropname8 = 'data/Onion'
+cropname9 = 'data/Soybean'
+cropname10 = 'data/Tomato/'
+cropname11 = 'data/Wheat'
 
 if __name__ == '__main__':
-    GetMandiForBajra()
+    # GetMandiForAll("Ginger",cropname4)
+    # finaldatastoredlocally(MandiListForAll, "Ginger", "5fdca00613b7130025988e8f")
+    # GetMandiForAll("Green Chilli",cropname5)
+    # finaldatastoredlocally(MandiListForAll, "Green Chilli", "5fdc9ed313b7130025988e85")
+    # GetMandiForAll("Jowar",cropname6)
+    # finaldatastoredlocally(MandiListForAll, "Jowar", "5fdc9ede13b7130025988e86")
+    # GetMandiForAll("Maize",cropname7)
+    # finaldatastoredlocally(MandiListForAll, "Maize", "5fdc9ee813b7130025988e87")
+    GetMandiForAll("Onion",cropname8)
+    finaldatastoredlocally(MandiListForAll, "Onion", "5fdc9ef513b7130025988e88")
+    GetMandiForAll("Soybean",cropname9)
+    finaldatastoredlocally(MandiListForAll, "Soybean", "5fdc9f0b13b7130025988e89")
+    GetMandiForAll("Tomato",cropname10)
+    finaldatastoredlocally(MandiListForAll, "Tomato", "5fdc9f1713b7130025988e8a")
+    GetMandiForAll("Wheat",cropname11)
+    finaldatastoredlocally(MandiListForAll, "Wheat", "5fdc9f2013b7130025988e8b")
+
     # GetMandiDataForBajra()
     # GetMandiForCorriander()
     # GetMandiDataForCorriander()
     # GetMandiForCotton()
     # GetMandiDataForCotton()
-    finaldatastoredlocallyBajra(MandiListForBajra,"BAJRA")
-    # finaldatastoredlocallyBajra(MandiListForCorriander,"CORRIANDER LEAVES")
-    # finaldatastoredlocallyBajra(MandiListForCotton,"cotton")
+    # finaldatastoredlocally(MandiListForBajra,"BAJRA","5fdc9fed13b7130025988e8c")
+    # finaldatastoredlocally(MandiListForCorriander,"CORRIANDER LEAVES","5fdc9ff613b7130025988e8d")
+    # finaldatastoredlocally(MandiListForCotton,"cotton","5fdc9ffe13b7130025988e8e")
+
+
 
 

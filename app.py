@@ -6,11 +6,15 @@ import json
 import os
 app = Flask(__name__)
 
-# def getMandiDataCropWise():
-GetBajraMandiData = future_prediction.GetMandiForBajra()
-GetCorrianderMandiData = future_prediction.GetMandiForCorriander()
-GetCottonMandiData = future_prediction.GetMandiForCotton()
 FinalDataSentToUser=[]
+
+def GetData(enteredmandi,crop,mandipath):
+    Data = future_prediction.GetMandiForAll(crop,mandipath)
+    for i in Data:
+        if i == enteredmandi:
+            f = open("finaljsonfiles/{}/{}".format(crop,enteredmandi))
+            data = json.load(f)
+            FinalDataSentToUser.append(data)
 
 
 @app.route('/getuserselectedmandi')
@@ -21,26 +25,23 @@ def getuserselectedmandi():
     else:
         EnteredMandi = MandiName+".csv"
         FinalDataSentToUser.clear()
-        for i in GetBajraMandiData:
-            if i==EnteredMandi:
-                f = open("finaljsonfiles/BAJRA/{}".format(EnteredMandi))
-                data = json.load(f)
-                FinalDataSentToUser.append(data)
-        for i in GetCorrianderMandiData:
-            if i==EnteredMandi:
-                f = open("finaljsonfiles/CORRIANDER LEAVES/{}".format(EnteredMandi))
-                data = json.load(f)
-                FinalDataSentToUser.append(data)
-        for i in GetCottonMandiData:
-            if i==EnteredMandi:
-                f = open("finaljsonfiles/cotton/{}".format(EnteredMandi))
-                data = json.load(f)
-                FinalDataSentToUser.append(data)
+        GetData(EnteredMandi,"BAJRA",future_prediction.cropname1)
+        GetData(EnteredMandi, "CORRIANDER LEAVES",future_prediction.cropname2)
+        GetData(EnteredMandi, "cotton",future_prediction.cropname3)
+        GetData(EnteredMandi, "Ginger",future_prediction.cropname4)
+        GetData(EnteredMandi, "Green Chilli",future_prediction.cropname5)
+        GetData(EnteredMandi, "Jowar",future_prediction.cropname6)
+        GetData(EnteredMandi, "Maize",future_prediction.cropname7)
+        GetData(EnteredMandi, "Onion",future_prediction.cropname8)
+        GetData(EnteredMandi, "Soybean",future_prediction.cropname9)
+        GetData(EnteredMandi, "Tomato",future_prediction.cropname10)
+        GetData(EnteredMandi, "Wheat",future_prediction.cropname11)
 
         return jsonify({
                 "data" : FinalDataSentToUser
     })
 
+port = int(os.environ.get("PORT", 5000))
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, host='192.168.29.54', port=port)
