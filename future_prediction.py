@@ -8,6 +8,7 @@ import glob
 from csv import reader
 import csv
 import re
+import GetPrice
 import pymongo
 import json
 from matplotlib import pyplot
@@ -255,6 +256,7 @@ def GetMandiid(cropId):
 
     mydb = client["Bhav"]
     mycol = mydb["mandis"]
+    selectedMandiId=""
     x = mycol.find()
     for i in x:
         for j in range(0,len(i['productId'])):
@@ -269,6 +271,7 @@ def GetMandiForAll(mandiname,path):
     for root, dirs, files in os.walk(directory):
         for file in files:
             MandiListForAll.append(file)
+            break
     # GetMandiDataForAll(MandiListForAll,mandiname)
     return MandiListForAll
 
@@ -417,14 +420,25 @@ import csv
 import json
 
 
+from datetime import date
+
+today = date.today()
+date = str(today).split("-")
+currentdate = date[2] + "/" + date[1] + "/" + date[0]
+yesterdaydate = str(int(date[2]) - 1) + "/" + date[1] + "/" + date[0]
+
 # Function to convert a CSV to JSON
 # Takes the file paths as arguments
-def make_json(csvFilePath, jsonFilePath,mandiname,cropname,cropId):
+def make_json(csvFilePath, jsonFilePath, mandiname, cropname, cropId):
     selectedmandiId = GetMandiid(cropId)
+    todaysprice =GetPrice(selectedmandiId,cropId,currentdate)
+    yesterdayprice = GetPrice(selectedmandiId, cropId,yesterdaydate)
     # create a dictionary
     listofdata=[]
     data = {
         "CropName":cropname,
+        "Today's Price":todaysprice,
+        "Yesterday's Price" : yesterdayprice,
         "CropId" : cropId,
         "MandiId" : selectedmandiId,
         "MandiName" : mandiname,
@@ -443,19 +457,21 @@ def make_json(csvFilePath, jsonFilePath,mandiname,cropname,cropId):
 
 def finaldatastoredlocally(MandiList,cropname,CropId):
     for i in MandiList:
-            finaldata = preprocessingdata(i,cropname)
-            finaldata.to_csv(r'finaldatasenttouser/{}/{}'.format(cropname,i))
-            with open('finaldatasenttouser/{}/{}'.format(cropname,i), 'r') as f:
-                 my_csv_text = f.read()
-                 find_str = ',Lower Modal Price,Upper Model Price'
-                 replace_str = 'Date,Lower Modal Price,Upper Model Price'
-            new_csv_str = re.sub(find_str, replace_str, my_csv_text)
+            # finaldata = preprocessingdata(i,cropname)
+            # finaldata.to_csv(r'finaldatasenttouser/{}/{}'.format(cropname,i))
+            # with open('finaldatasenttouser/{}/{}'.format(cropname,i), 'r') as f:
+            #      my_csv_text = f.read()
+            #      lines = f.readline()
+            #      find_str = str(lines[0])
+            #      replace_str = 'Date,Lower Modal Price,Upper Model Price'
+            # new_csv_str = re.sub(find_str, replace_str, my_csv_text)
 
             # open new file and save
-            new_csv_path = 'finaldatasenttouser/{}/{}'.format(cropname,i)
-            with open(new_csv_path, 'w') as f:
-                       f.write(new_csv_str)
+            # new_csv_path = 'finaldatasenttouser/{}/{}'.format(cropname,i)
+            # with open(new_csv_path, 'w') as f:
+            #            f.write(new_csv_str)
             make_json('finaldatasenttouser/{}/{}'.format(cropname,i),'finaljsonfiles/{}/{}'.format(cropname,i),i,cropname,CropId)
+            break
 
 
 cropname1 = 'data/BAJRA/'
@@ -470,8 +486,15 @@ cropname9 = 'data/Soybean'
 cropname10 = 'data/Tomato/'
 cropname11 = 'data/Wheat'
 
+
 if __name__ == '__main__':
-    # GetMandiForAll("Ginger",cropname4)
+    GetMandiForAll("BAJRA", cropname1)
+    finaldatastoredlocally(MandiListForAll, "BAJRA", "5fdc9fed13b7130025988e8c")
+    # GetMandiForAll("CORRIANDER LEAVES", cropname5)
+    # finaldatastoredlocally(MandiListForAll, "CORRIANDER LEAVES", "5fdc9ff613b7130025988e8d")
+    # GetMandiForAll("cotton", cropname2)
+    # finaldatastoredlocally(MandiListForAll, "cotton", "5fdc9ffe13b7130025988e8e")
+    # GetMandiForAll("Ginger",cropname3)
     # finaldatastoredlocally(MandiListForAll, "Ginger", "5fdca00613b7130025988e8f")
     # GetMandiForAll("Green Chilli",cropname5)
     # finaldatastoredlocally(MandiListForAll, "Green Chilli", "5fdc9ed313b7130025988e85")
@@ -479,14 +502,14 @@ if __name__ == '__main__':
     # finaldatastoredlocally(MandiListForAll, "Jowar", "5fdc9ede13b7130025988e86")
     # GetMandiForAll("Maize",cropname7)
     # finaldatastoredlocally(MandiListForAll, "Maize", "5fdc9ee813b7130025988e87")
-    GetMandiForAll("Onion",cropname8)
-    finaldatastoredlocally(MandiListForAll, "Onion", "5fdc9ef513b7130025988e88")
-    GetMandiForAll("Soybean",cropname9)
-    finaldatastoredlocally(MandiListForAll, "Soybean", "5fdc9f0b13b7130025988e89")
-    GetMandiForAll("Tomato",cropname10)
-    finaldatastoredlocally(MandiListForAll, "Tomato", "5fdc9f1713b7130025988e8a")
-    GetMandiForAll("Wheat",cropname11)
-    finaldatastoredlocally(MandiListForAll, "Wheat", "5fdc9f2013b7130025988e8b")
+    # GetMandiForAll("Onion",cropname8)
+    # finaldatastoredlocally(MandiListForAll, "Onion", "5fdc9ef513b7130025988e88")
+    # GetMandiForAll("Soybean",cropname9)
+    # finaldatastoredlocally(MandiListForAll, "Soybean", "5fdc9f0b13b7130025988e89")
+    # GetMandiForAll("Tomato",cropname10)
+    # finaldatastoredlocally(MandiListForAll, "Tomato", "5fdc9f1713b7130025988e8a")
+    # GetMandiForAll("Wheat",cropname11)
+    # finaldatastoredlocally(MandiListForAll, "Wheat", "5fdc9f2013b7130025988e8b")
 
     # GetMandiDataForBajra()
     # GetMandiForCorriander()
