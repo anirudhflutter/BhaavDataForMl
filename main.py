@@ -82,21 +82,33 @@ def SendWholeDataToMonil(mandiname, productid):
     print(x)
 
 
+mandilistforall = []
+
+
+def GetMandiForAll(cropname):
+    directory = os.path.join(cropname)
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".csv"):
+                file.split(".")
+                mandilistforall.append(file.replace(".csv", ""))
+    return mandilistforall
+
+
 def main():
-    # GetMandiForBajra()
     # GetMandiForCorriander()
     # GetMandiForCotton()
     GetProductNameAndId()
     for i in range(0,len(CropListName)):
-        # if CropListName[i]=='Bajra':
-        #     for j in range(0, len(MandiListForBajra)):
-        #         SendWholeDataToMonil(MandiListForBajra[j],CropListId[i])
-        # if CropListName[i] == 'Corriander Leaves':
-        #     for j in range(0, len(MandiListForCorriander)):
-        #         SendWholeDataToMonil(MandiListForCorriander[j], CropListId[i])
-        # if CropListName[i] == 'Cotton':
-        #     for j in range(0, len(MandiListForCotton)):
-        #         SendWholeDataToMonil(MandiListForCotton[j], CropListId[i])
+        if CropListName[i]=='Bajra':
+            for j in range(0, len(future_prediction.GetMandiForAll("Bajra",future_prediction.cropname1))):
+                SendWholeDataToMonil(str(future_prediction.GetMandiForAll("Bajra",future_prediction.cropname1)[j]), CropListId[i])
+        if CropListName[i] == 'Corriander Leaves':
+            for j in range(0, len(future_prediction.GetMandiForAll("Corriander Leaves",future_prediction.cropname2))):
+                SendWholeDataToMonil(str(future_prediction.GetMandiForAll("Corriander Leaves",future_prediction.cropname2)[j]), CropListId[i])
+        if CropListName[i] == 'Cotton':
+            for j in range(0, len(future_prediction.GetMandiForAll("Cotton",future_prediction.cropname3))):
+                SendWholeDataToMonil(str(future_prediction.GetMandiForAll("Cotton",future_prediction.cropname3)[j]), CropListId[i])
         if CropListName[i] == 'Ginger':
             for j in range(0, len(future_prediction.GetMandiForAll("Ginger",future_prediction.cropname4))):
                 SendWholeDataToMonil(str(future_prediction.GetMandiForAll("Ginger",future_prediction.cropname4)[j]), CropListId[i])

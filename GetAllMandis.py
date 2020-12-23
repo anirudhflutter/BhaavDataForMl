@@ -21,15 +21,18 @@ def getAllMandis():
 
     for data in x:
         mandiname = str(data["MandiName"]).replace(".csv", "")
+        mandiid = str(data["_id"])
         if mandiname not in GetAllMandis:
-            GetAllMandis.append(mandiname)
+            GetAllMandis.append({
+                "mandiname":mandiname,
+                "id":mandiid
+            })
     return mandiname
 
 
 @app.route('/getAllMandis')
 def AllMandis():
     return jsonify({"Data": GetAllMandis})
-
 
 
 if __name__ == '__main__':

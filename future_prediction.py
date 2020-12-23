@@ -271,7 +271,6 @@ def GetMandiForAll(mandiname,path):
     for root, dirs, files in os.walk(directory):
         for file in files:
             MandiListForAll.append(file)
-            break
     # GetMandiDataForAll(MandiListForAll,mandiname)
     return MandiListForAll
 
@@ -420,25 +419,18 @@ import csv
 import json
 
 
-from datetime import date
 
-today = date.today()
-date = str(today).split("-")
-currentdate = date[2] + "/" + date[1] + "/" + date[0]
-yesterdaydate = str(int(date[2]) - 1) + "/" + date[1] + "/" + date[0]
 
 # Function to convert a CSV to JSON
 # Takes the file paths as arguments
-def make_json(csvFilePath, jsonFilePath, mandiname, cropname, cropId):
+def make_json(csvFilePath, jsonFilePath, mandiname, cropname, cropId,cropImage):
     selectedmandiId = GetMandiid(cropId)
-    todaysprice =GetPrice(selectedmandiId,cropId,currentdate)
-    yesterdayprice = GetPrice(selectedmandiId, cropId,yesterdaydate)
+
     # create a dictionary
     listofdata=[]
     data = {
         "CropName":cropname,
-        "Today's Price":todaysprice,
-        "Yesterday's Price" : yesterdayprice,
+        "CropImage" :cropImage,
         "CropId" : cropId,
         "MandiId" : selectedmandiId,
         "MandiName" : mandiname,
@@ -455,7 +447,7 @@ def make_json(csvFilePath, jsonFilePath, mandiname, cropname, cropId):
         json.dump(data,jsonfile)
 
 
-def finaldatastoredlocally(MandiList,cropname,CropId):
+def finaldatastoredlocally(MandiList,cropname,CropId,cropImage):
     for i in MandiList:
             # finaldata = preprocessingdata(i,cropname)
             # finaldata.to_csv(r'finaldatasenttouser/{}/{}'.format(cropname,i))
@@ -470,8 +462,8 @@ def finaldatastoredlocally(MandiList,cropname,CropId):
             # new_csv_path = 'finaldatasenttouser/{}/{}'.format(cropname,i)
             # with open(new_csv_path, 'w') as f:
             #            f.write(new_csv_str)
-            make_json('finaldatasenttouser/{}/{}'.format(cropname,i),'finaljsonfiles/{}/{}'.format(cropname,i),i,cropname,CropId)
-            break
+            make_json('finaldatasenttouser/{}/{}'.format(cropname,i),'finaljsonfiles/{}/{}'.format(cropname,i),i,cropname,CropId,cropImage)
+
 
 
 cropname1 = 'data/BAJRA/'
@@ -488,28 +480,28 @@ cropname11 = 'data/Wheat'
 
 
 if __name__ == '__main__':
-    GetMandiForAll("BAJRA", cropname1)
-    finaldatastoredlocally(MandiListForAll, "BAJRA", "5fdc9fed13b7130025988e8c")
-    # GetMandiForAll("CORRIANDER LEAVES", cropname5)
-    # finaldatastoredlocally(MandiListForAll, "CORRIANDER LEAVES", "5fdc9ff613b7130025988e8d")
-    # GetMandiForAll("cotton", cropname2)
-    # finaldatastoredlocally(MandiListForAll, "cotton", "5fdc9ffe13b7130025988e8e")
-    # GetMandiForAll("Ginger",cropname3)
-    # finaldatastoredlocally(MandiListForAll, "Ginger", "5fdca00613b7130025988e8f")
+    # GetMandiForAll("BAJRA", cropname1)
+    # finaldatastoredlocally(MandiListForAll, "BAJRA", "5fdc9fed13b7130025988e8c","https://thumbs.dreamstime.com/b/bajra-cereal-yellowish-brown-color-raw-whole-pearl-millet-168541616.jpg")
+    # GetMandiForAll("CORRIANDER LEAVES", cropname2)
+    # finaldatastoredlocally(MandiListForAll, "CORRIANDER LEAVES", "5fdc9ff613b7130025988e8d","https://geekgardener.in/wp-content/uploads/growing-coriander-seedlings-ready-for-harvest-1280x720.jpg")
+    # GetMandiForAll("cotton", cropname3)
+    # finaldatastoredlocally(MandiListForAll, "cotton", "5fdc9ffe13b7130025988e8e","https://www.pilotonline.com/resizer/olKZ3euMCIX43YxxY_ZceNTgzDQ=/1200x0/top/arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/72NAPGYYJZC4FFUGNEKKAZO6GM.jpg")
+    # GetMandiForAll("Ginger",cropname4)
+    # finaldatastoredlocally(MandiListForAll, "Ginger", "5fdca00613b7130025988e8f","https://post.greatist.com/wp-content/uploads/sites/3/2020/02/265990_1100-1100x628.jpg")
     # GetMandiForAll("Green Chilli",cropname5)
-    # finaldatastoredlocally(MandiListForAll, "Green Chilli", "5fdc9ed313b7130025988e85")
+    # finaldatastoredlocally(MandiListForAll, "Green Chilli", "5fdc9ed313b7130025988e85","https://i2.wp.com/freshmarket.co.in/wp-content/uploads/2019/10/Green-chilli-02.jpg?fit=1200%2C1200&ssl=1")
     # GetMandiForAll("Jowar",cropname6)
-    # finaldatastoredlocally(MandiListForAll, "Jowar", "5fdc9ede13b7130025988e86")
+    # finaldatastoredlocally(MandiListForAll, "Jowar", "5fdc9ede13b7130025988e86","https://images-na.ssl-images-amazon.com/images/I/81Kt3YceSEL._SL1460_.jpg")
     # GetMandiForAll("Maize",cropname7)
-    # finaldatastoredlocally(MandiListForAll, "Maize", "5fdc9ee813b7130025988e87")
+    # finaldatastoredlocally(MandiListForAll, "Maize", "5fdc9ee813b7130025988e87","https://www.lima-europe.eu/wp-content/uploads/2017/07/Corn.jpg")
     # GetMandiForAll("Onion",cropname8)
-    # finaldatastoredlocally(MandiListForAll, "Onion", "5fdc9ef513b7130025988e88")
+    # finaldatastoredlocally(MandiListForAll, "Onion", "5fdc9ef513b7130025988e88","https://food.fnr.sndimg.com/content/dam/images/food/fullset/2020/08/10/fn_red-onions-getty_s4x3.jpg.rend.hgtvcom.476.357.suffix/1597096320410.jpeg")
     # GetMandiForAll("Soybean",cropname9)
-    # finaldatastoredlocally(MandiListForAll, "Soybean", "5fdc9f0b13b7130025988e89")
-    # GetMandiForAll("Tomato",cropname10)
-    # finaldatastoredlocally(MandiListForAll, "Tomato", "5fdc9f1713b7130025988e8a")
-    # GetMandiForAll("Wheat",cropname11)
-    # finaldatastoredlocally(MandiListForAll, "Wheat", "5fdc9f2013b7130025988e8b")
+    # finaldatastoredlocally(MandiListForAll, "Soybean", "5fdc9f0b13b7130025988e89","https://www.marketplace.org/wp-content/uploads/2018/11/soybeans_1.jpg?fit=1800%2C1000")
+    GetMandiForAll("Tomato",cropname10)
+    finaldatastoredlocally(MandiListForAll, "Tomato", "5fdc9f1713b7130025988e8a","https://post.healthline.com/wp-content/uploads/2020/09/tomatoes-1200x628-facebook-1200x628.jpg")
+    GetMandiForAll("Wheat",cropname11)
+    finaldatastoredlocally(MandiListForAll, "Wheat", "5fdc9f2013b7130025988e8b","https://5.imimg.com/data5/ST/QW/MY-38700875/fresh-wheat-crop-500x500.jpg")
 
     # GetMandiDataForBajra()
     # GetMandiForCorriander()
